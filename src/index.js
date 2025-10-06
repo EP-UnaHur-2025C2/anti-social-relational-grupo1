@@ -5,8 +5,8 @@ const PORT = process.env.PORT || 3000;
 // Rutas:
 const userRoute = require("./routes/userRoute");
 
-// Base de datos (completar):
-const dataBase = require("")["sequelize"];
+// Base de datos:
+const dataBase = require("./db/models")["sequelize"];
 
 // Para ejecutar:
 app.use(express.json());
