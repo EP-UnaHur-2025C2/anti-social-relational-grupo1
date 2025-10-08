@@ -4,7 +4,7 @@ const route = Router();
 
 //controladores
 
-const { getPosts, getPostById, createPost, updatePost, deletePost } = require("../controllers/postController")
+const { getPosts, getPostById, createPost, updatePost, deletePost } = require("../controllers/post.controller")
 
 route.get("/", getPosts);
 route.get("/:id", getPostById);
