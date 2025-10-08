@@ -2,8 +2,8 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "unahur_antisocialred",
-    "host": "data/db.sqlite",
+    "database": "datastore",
+    "host": "data/datastore.db",
     "dialect": "sqlite"
   },
   "test": {

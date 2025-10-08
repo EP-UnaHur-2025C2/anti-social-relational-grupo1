@@ -2,7 +2,7 @@ const { Router } = require("express");
 const route = Router();
 
 // Middlewares:
-const { existUserName } = require("");
+const { existUserName } = require("../middlewares/userMiddlewares");
 
 // Controladores:
 const { getUsers, getUserById, createUser, updateUser, deleteUser } = require("../controllers/userController");
