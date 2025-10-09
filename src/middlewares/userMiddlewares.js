@@ -1,17 +1,18 @@
-const { user } = require("../db/models");
+const { User } = require("../db/models");
 
 const existUserName = async (req, res, next) => {
-    try {
-        const { nickName } = req.body;
-        if (!nickName) return res.status(400).json({ error: "Se requiere un nickName" });
+  try {
+    const { nickname } = req.body;
+    if (!nickname)
+      return res.status(400).json({ error: "Se requiere un nickName" });
 
-        const found = await user.findOne({ where: { nickName } });
-        if (found) return res.status(409).json({ error: "nickName ya existe" });
+    const found = await User.findOne({ where: { nickname } });
+    if (found) return res.status(409).json({ error: "nickName ya existe" });
 
-        next();
-    } catch (error) {
-        res.status(500).json({ error: "Error al validar nickName" });
-    }
+    next();
+  } catch (error) {
+    res.status(500).json({ error: "Error al validar nickName" });
+  }
 };
 
 module.exports = { existUserName };
