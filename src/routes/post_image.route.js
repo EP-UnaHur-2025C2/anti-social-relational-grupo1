@@ -1,9 +1,10 @@
 const { Router } = require("express");
-
 const route = Router();
 
-//controladores
+// Middlewares
+const { validateImageBody, checkImageExists } = require("../middlewares/post_imageMiddlewares");
 
+// Controladores
 const {
   getPost_images,
   getPost_imageById,
@@ -13,9 +14,9 @@ const {
 } = require("../controllers/post_image.controller");
 
 route.get("/", getPost_images);
-route.get("/:id", getPost_imageById);
-route.post("/", createPost_image);
-route.put("/:id", updatePost_image);
-route.delete("/:id", deletePost_image);
+route.get("/:id", checkImageExists, getPost_imageById);
+route.post("/", validateImageBody, createPost_image);
+route.put("/:id", checkImageExists, updatePost_image);
+route.delete("/:id", checkImageExists, deletePost_image);
 
 module.exports = route;

@@ -1,78 +1,109 @@
-const { Post } = require("../db/models");
+const { Post, Tag } = require("../db/models");
 
-// Todos los posts
+// Obtener todos los posts (con tags opcionalmente)
 const getPosts = async (_, res) => {
   try {
-    const data = await Post.findAll({});
-    res.status(200).json(data);
+    const posts = await Post.findAll({
+      include: [
+        {
+          model: Tag,
+          as: "tags",
+          through: { attributes: [] }, 
+        },
+      ],
+    });
+
+    res.status(200).json(posts);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Error al obtener los posts", detalle: error.message });
+    res.status(500).json({
+      error: "Error al obtener los posts",
+      detalle: error.message,
+    });
   }
 };
 
-// Post por id
+// Obtener post por ID
 const getPostById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const foundPost = await Post.findByPk(id);
+    const post = await Post.findByPk(req.params.id, {
+      include: [
+        {
+          model: Tag,
+          as: "tags",
+          through: { attributes: [] },
+        },
+      ],
+    });
 
-    if (!foundPost)
-      return res.status(404).json({ error: "Post no encontrado" });
-    res.status(200).json(foundPost);
+    if (!post) return res.status(404).json({ error: "Post no encontrado" });
+
+    res.status(200).json(post);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener el post" });
   }
 };
 
-// crear post
+// Crear post (con tags opcionales)
 const createPost = async (req, res) => {
   try {
-    const descripcion = req.body.texto;
-    if (!descripcion)
-      return res
-        .status(400)
-        .json({ error: "El post debe tener una descripcion" });
-    const newPost = await Post.create(req.body);
+    const { texto, tags } = req.body;
 
-    res.status(200).json(newPost);
+    if (!texto || texto.trim() === "") {
+      return res.status(400).json({ error: "El post debe tener una descripción" });
+    }
+
+    const newPost = await Post.create({ texto });
+    if (tags && Array.isArray(tags) && tags.length > 0) {
+      await newPost.setTags(tags);
+    }
+
+    const postConTags = await Post.findByPk(newPost.id, {
+      include: [{ model: Tag, as: "tags", through: { attributes: [] } }],
+    });
+
+    res.status(201).json(postConTags);
   } catch (error) {
     res.status(500).json({ error: "Error al crear el post" });
   }
 };
 
-// actualizar post con id
+// Actualizar post (y sus tags opcionales)
 const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = await Post_image.update(req.body, { where: { id } });
-    if (updated[0] === 0)
-      return res.status(404).json({ error: "Usuario no encontrado" });
+    const { texto, tags } = req.body;
 
-    const updatedPost = await post.findByPk(id);
+    const post = await Post.findByPk(id);
+    if (!post) return res.status(404).json({ error: "Post no encontrado" });
+
+    if (texto) await post.update({ texto });
+
+    if (tags && Array.isArray(tags)) {
+      await post.setTags(tags);
+    }
+
+    const updatedPost = await Post.findByPk(id, {
+      include: [{ model: Tag, as: "tags", through: { attributes: [] } }],
+    });
+
     res.status(200).json(updatedPost);
   } catch (error) {
     res.status(500).json({ error: "Error al actualizar el post" });
   }
 };
 
-// eliminar post
-
+// Eliminar post
 const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleted = await Post.destroy({
-      where: { id },
-    });
+    const deleted = await Post.destroy({ where: { id } });
 
     if (!deleted) return res.status(404).json({ error: "Post no encontrado" });
+
     res.status(200).json({ message: "Post eliminado correctamente" });
   } catch (error) {
     res.status(500).json({ error: "Error al eliminar el post" });
   }
 };
-
-// falta post con post-img y tags
 
 module.exports = { getPosts, getPostById, createPost, updatePost, deletePost };

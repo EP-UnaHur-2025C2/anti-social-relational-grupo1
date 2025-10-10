@@ -1,9 +1,10 @@
 const { Router } = require("express");
-
 const route = Router();
 
-//controladores
+// Middlewares
+const { postExists } = require("../middlewares/postMiddlewares");
 
+// Controladores
 const {
   getPosts,
   getPostById,
@@ -13,9 +14,9 @@ const {
 } = require("../controllers/post.controller");
 
 route.get("/", getPosts);
-route.get("/:id", getPostById);
+route.get("/:id", postExists, getPostById);
 route.post("/", createPost);
-route.put("/:id", updatePost);
-route.delete("/:id", deletePost);
+route.put("/:id", postExists, updatePost);
+route.delete("/:id", postExists, deletePost);
 
 module.exports = route;

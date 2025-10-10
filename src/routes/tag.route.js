@@ -1,12 +1,10 @@
 const { Router } = require("express");
-
 const route = Router();
 
-//middleware
+// Middleware
 const { existTag } = require("../middlewares/tagMiddlewares");
 
-//controladores
-
+// Controladores
 const {
   getTags,
   getTagById,

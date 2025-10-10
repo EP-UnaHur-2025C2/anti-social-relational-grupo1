@@ -6,7 +6,7 @@ const existTag = async (req, res, next) => {
     if (!nombre)
       return res.status(400).json({ error: "Se requiere un nombre de tag" });
     const found = await Tag.findOne({ where: { nombre } });
-    if (found) return res.status(409).json({ error: "tag ya existente" });
+    if (found) return res.status(409).json({ error: "Ya existe un tag con ese nombre" });
 
     next();
   } catch (error) {

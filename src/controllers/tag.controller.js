@@ -25,7 +25,7 @@ const getTagById = async (req, res) => {
   }
 };
 
-// crear Tag
+// Crear Tag
 const createTag = async (req, res) => {
   try {
     const newTag = await Tag.create(req.body);
@@ -35,7 +35,7 @@ const createTag = async (req, res) => {
   }
 };
 
-// actualizar Tag con id
+// Actualizar Tag con id
 const updateTag = async (req, res) => {
   try {
     const { id } = req.params;
@@ -50,8 +50,7 @@ const updateTag = async (req, res) => {
   }
 };
 
-// eliminar Tag
-
+// Eliminar Tag
 const deleteTag = async (req, res) => {
   try {
     const { id } = req.params;

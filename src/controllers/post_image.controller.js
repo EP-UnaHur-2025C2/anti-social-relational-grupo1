@@ -27,7 +27,7 @@ const getPost_imageById = async (req, res) => {
   }
 };
 
-// crear Post_image
+// Crear Post_image
 const createPost_image = async (req, res) => {
   try {
     const newPost_image = await Post_images.create(req.body);
@@ -38,7 +38,7 @@ const createPost_image = async (req, res) => {
   }
 };
 
-// actualizar Post_image con id
+// Actualizar Post_image con id
 const updatePost_image = async (req, res) => {
   try {
     const { id } = req.params;
@@ -53,8 +53,7 @@ const updatePost_image = async (req, res) => {
   }
 };
 
-// eliminar Post_image
-
+// Eliminar Post_image
 const deletePost_image = async (req, res) => {
   try {
     const { id } = req.params;
