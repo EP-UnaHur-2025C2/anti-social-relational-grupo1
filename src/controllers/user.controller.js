@@ -13,7 +13,7 @@ const getUsers = async (_, res) => {
 // Nuevo usuario:
 const createUser = async (req, res) => {
     try {
-        const { nickName, email } = req.body;
+        const { nickName } = req.body;
         if (!nickName) return res.status(400).json({ error: "nickName es obligatorio" });
 
         const newUser = await User.create(req.body);
@@ -26,13 +26,13 @@ const createUser = async (req, res) => {
 // Usuario por ID:
 const getUserById = async (req, res) => {
     try {
-        // Encontrar usuarios:
+        // Encontrar usuario:
         const { id } = req.params;
-        const foundUser = await User.findByPk(id);
+        const usuario = await User.findByPk(id);
 
         // Lo que pasa si no existe:
-        if (!foundUser) return res.status(404).json({ error: "Usuario no encontrado" });
-        res.status(200).json(foundUser);
+        if (!usuario) return res.status(404).json({ error: "Usuario no encontrado" });
+        res.status(200).json(usuario);
     } catch (error) {
         res.status(500).json({ error: "Error al obtener el usuario" });
     }
@@ -42,8 +42,8 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const [updated] = await User.update(req.body, { where: { id } });
-        if (!updated) return res.status(404).json({ error: "Usuario no encontrado" });
+        const [usuario] = await User.update(req.body, { where: { id } });
+        if (!usuario) return res.status(404).json({ error: "Usuario no encontrado" });
 
         const updatedUser = await User.findByPk(id);
         res.status(200).json(updatedUser);
@@ -61,14 +61,11 @@ const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
         const deleted = await User.destroy({ where: { id } });
-
         if (!deleted) return res.status(404).json({ error: "Usuario no encontrado" });
         res.status(200).json({ message: "Usuario eliminado correctamente" });
     } catch (error) {
         res.status(500).json({ error: "Error al eliminar el usuario" });
     }
 }
-
-//get posteos del user
 
 module.exports = { getUsers, createUser, getUserById, updateUser, deleteUser };
