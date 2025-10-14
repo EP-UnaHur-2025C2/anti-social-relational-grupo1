@@ -13,7 +13,6 @@ const {
   deletePost,
 } = require("../controllers/post.controller");
 
-// Rutas para Post
 route.get("/", getPosts);
 route.get("/:id", postExists, getPostById);
 route.post("/", createPost);
