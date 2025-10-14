@@ -2,6 +2,7 @@ const { Router } = require("express");
 const route = Router();
 
 // Middlewares
+const { commentExists } = require("../middlewares/commentMiddlewares");
 
 // Controladores
 const {
@@ -13,9 +14,9 @@ const {
 } = require("../controllers/comment.controller");
 
 route.get("/", getComments);
-route.get("/:id", getCommentById);
+route.get("/:id", commentExists, getCommentById);
 route.post("/", createComment);
-route.put("/:id", updateComment);
-route.delete("/:id", deleteComment);
+route.put("/:id", commentExists, updateComment);
+route.delete("/:id", commentExists, deleteComment);
 
 module.exports = route;

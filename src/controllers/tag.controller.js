@@ -1,6 +1,6 @@
 const { Tag } = require("../db/models");
 
-// Todos los Tags
+// Devolver todos los Tags
 const getTags = async (_, res) => {
   try {
     const data = await Tag.findAll({});

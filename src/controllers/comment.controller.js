@@ -2,7 +2,7 @@ const { Comment, Post, User } = require("../db/models");
 const { Op } = require("sequelize");
 
 // Variable de entorno para la cantidad de meses visibles:
-const COMMENT_VISIBLE_MESES = paseInt(process.env.COMMENT_VISIBLE_MESES);
+const COMMENT_VISIBLE_MESES = parseInt(process.env.COMMENT_VISIBLE_MESES);
 
 // Calcular la fecha límite para comentarios visibles:
 const getLimiteVisible = () => {

@@ -1,6 +1,6 @@
 const { User } = require("../db/models");
 
-// Todos los usuarios:
+// Devolver Todos los usuarios:
 const getUsers = async (_, res) => {
     try {
         const users = await User.findAll({});
@@ -13,6 +13,9 @@ const getUsers = async (_, res) => {
 // Nuevo usuario:
 const createUser = async (req, res) => {
     try {
+        const { nickName, email } = req.body;
+        if (!nickName) return res.status(400).json({ error: "nickName es obligatorio" });
+
         const newUser = await User.create(req.body);
         res.status(201).json(newUser);
     } catch (error) {

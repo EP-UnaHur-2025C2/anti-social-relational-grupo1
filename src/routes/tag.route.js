@@ -15,7 +15,7 @@ const {
 
 route.get("/", getTags);
 route.get("/:id", getTagById);
-route.post("/", existTag, createTag);
+route.post("/", existTag, createTag); // Tiene el Middleware.
 route.put("/:id", updateTag);
 route.delete("/:id", deleteTag);
 
