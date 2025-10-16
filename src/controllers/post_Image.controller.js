@@ -5,7 +5,7 @@ const getImagesFromPost = async (req, res) => {
     try {
         const { postId } = req.params;
         const images = await Post_images.findAll({ where: { postId } });
-        res.json(images);
+        res.status(200).json(images);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener imágenes", error });
     }
@@ -30,7 +30,7 @@ const deleteImageFromPost = async (req, res) => {
     try {
         const { imageId } = req.params;
         await Post_images.destroy({ where: { id: imageId } });
-        res.json({ message: "Imagen eliminada correctamente" });
+        res.status(200).json({ message: "Imagen eliminada correctamente" });
     } catch (error) {
         res.status(500).json({ message: "Error al eliminar imagen", error });
     }

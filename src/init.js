@@ -20,14 +20,16 @@ const init = async () => {
 
     const post1 = await Post.create({
       texto: "posteo1abcdefghi",
+      userId: 1,
     });
 
     const post2 = await Post.create({
       texto: "posteo2abdcdefghi",
+      userId: 2,
     });
 
-    const tag1 = await Tag.create({ name: "tag1" });
-    const tag2 = await Tag.create({ name: "tag2" });
+    const tag1 = await Tag.create({ nombre: "tag1" });
+    const tag2 = await Tag.create({ nombre: "tag2" });
   
     // Asociar tags a un post:
     await post1.addTag(tag1);

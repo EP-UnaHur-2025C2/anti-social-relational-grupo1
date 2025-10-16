@@ -21,8 +21,8 @@ const getComments = async (_, res) => {
                 visible: true
             },
             include: [
-                { model: Post, as: "post" },
-                { model: User, as: "user" }
+                { model: Post },
+                { model: User }
             ],
             order: [["createdAt", "DESC"]],
         });
@@ -39,12 +39,15 @@ const getCommentById = async (req,res) => {
         const { id } = req.params;
         const comment = await Comment.findByPk(id, {
             include: [
-                { model: Post, as: "post" },
-                { model: User, as: "user" }
+                { model: Post },
+                { model: User }
             ]
         });
+
         if (!comment) return res.status(404).json({ error: "Comentario no encontrado" });
+
         const limiteVisible = getLimiteVisible();
+
         if (comment.createdAt < limiteVisible || !comment.visible) {
             return res.status(403).json({ error: "Comentario no visible" });
         }
@@ -58,16 +61,24 @@ const getCommentById = async (req,res) => {
 // Crear un comentario:
 const createComment = async (req, res) => {
     try {
-        const { texto, postId, userId } = req.body;
+        const { postId } = req.params;
+        const { texto, userId } = req.body;
+        
+        const post = await Post.findByPk(postId);
+        if (!post) return res.status(404).json({ error: "Post no encontrado" });
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
 
         const newComment = await Comment.create({
             texto,
-            postId,
             userId,
             visible: true,
-            createdAt: new Date()
+            postId
         });
         
+        await post.addComment(newComment)
         res.status(201).json(newComment);
     } catch (error) {
         res.status(500).json({ error: "Error al crear el comentario" });

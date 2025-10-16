@@ -18,12 +18,6 @@ module.exports = (sequelize, DataTypes) => {
   Comment.init({
     texto: DataTypes.STRING,
     visible: DataTypes.BOOLEAN
-    /*
-    !!!! TERMINAR DE COMPLETAR ESTO CUANDO SEA NECESARIO Y SE PUEDA. !!!!!
-    {
-      type: new DataTypes.VIRTUAL(DataTypes.BOOLEAN, [])
-    }
-    */
   }, {
     sequelize,
     modelName: 'Comment',

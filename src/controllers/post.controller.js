@@ -1,12 +1,12 @@
 const { Post, Post_images } = require("../db/models");
 
 // Obtener todos los posts
-const getPosts = async (req, res) => {
+const getPosts = async (_, res) => {
   try {
     const posts = await Post.findAll({
-      include: [{ model: Post_images, as: "images" }],
+      include: [{ model: Post_images }],
     });
-    res.json(posts);
+    res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener los posts", error });
   }
@@ -17,10 +17,10 @@ const getPostById = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.findByPk(id, {
-      include: [{ model: Post_images, as: "images" }],
+      include: [{ model: Post_images }],
     });
     if (!post) return res.status(404).json({ message: "Post no encontrado" });
-    res.json(post);
+    res.status(200).json(post);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el post", error });
   }
@@ -46,7 +46,7 @@ const updatePost = async (req, res) => {
     if (!post) return res.status(404).json({ message: "Post no encontrado" });
 
     await post.update({ texto });
-    res.json(post);
+    res.status(200).json(post);
   } catch (error) {
     res.status(500).json({ message: "Error al actualizar el post", error });
   }
@@ -61,7 +61,7 @@ const deletePost = async (req, res) => {
 
     await Post_images.destroy({ where: { postId: id } });
     await post.destroy();
-    res.json({ message: "Post eliminado correctamente" });
+    res.status(200).json({ message: "Post eliminado correctamente" });
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el post", error });
   }

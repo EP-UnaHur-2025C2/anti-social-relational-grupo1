@@ -15,8 +15,9 @@ const {
 
 route.get("/", getComments);
 route.get("/:id", commentExists, getCommentById);
-route.post("/", createComment);
+route.post("/post/:postId", createComment);
 route.put("/:id", commentExists, updateComment);
 route.delete("/:id", commentExists, deleteComment);
+
 
 module.exports = route;
