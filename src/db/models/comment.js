@@ -1,8 +1,5 @@
-'use strict';
-const {
-  Model,
-  INTEGER
-} = require('sequelize');
+"use strict";
+const { Model, INTEGER } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
     /**
@@ -11,16 +8,19 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Comment.belongsTo(models.Post, {foreignKey: 'postId'})
-      Comment.belongsTo(models.User, {foreignKey: 'userId'})
+      Comment.belongsTo(models.Post, { foreignKey: "postId" });
+      Comment.belongsTo(models.User, { foreignKey: "userId" });
     }
   }
-  Comment.init({
-    texto: DataTypes.STRING,
-    visible: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Comment',
-  });
+  Comment.init(
+    {
+      texto: { type: DataTypes.STRING, allowNull: false },
+      visible: DataTypes.BOOLEAN, //ver como calcularlo
+    },
+    {
+      sequelize,
+      modelName: "Comment",
+    }
+  );
   return Comment;
 };

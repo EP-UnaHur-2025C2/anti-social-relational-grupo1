@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const postSchema = Joi.object({
+const commentSchema = Joi.object({
   texto: Joi.string().max(140).required().messages({
     "string.empty": "El texto no puede estar vacio",
     "string.max": "El texto debe tener como maximo 140 caracteres",
@@ -8,4 +8,4 @@ const postSchema = Joi.object({
   }),
 });
 
-module.exports = postSchema;
+module.exports = commentSchema;

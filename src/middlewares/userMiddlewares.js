@@ -1,10 +1,10 @@
 const { User } = require("../db/models");
+const genericSchemaValidator = require("../schemas/genericSchemaValidator");
+const userSchema = require("../schemas/user.schema");
 
 const existUserName = async (req, res, next) => {
   try {
     const { nickname } = req.body;
-    if (!nickname)
-      return res.status(400).json({ error: "Se requiere un nickName" });
 
     const found = await User.findOne({ where: { nickname } });
     if (found) return res.status(409).json({ error: "nickName ya existe" });
@@ -15,4 +15,19 @@ const existUserName = async (req, res, next) => {
   }
 };
 
-module.exports = { existUserName };
+const validarSchemaUser = (req, res, next) => {
+  const { error, _ } = genericSchemaValidator(userSchema, req.body);
+  if (error) {
+    res.status(400).json({
+      errores: error.details.map((e) => {
+        return {
+          attributo: e.path[0],
+          detalle: e.message,
+        };
+      }),
+    });
+  }
+  next();
+};
+
+module.exports = { existUserName, validarSchemaUser };
