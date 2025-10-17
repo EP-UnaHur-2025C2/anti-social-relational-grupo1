@@ -67,10 +67,53 @@ const deletePost = async (req, res) => {
   }
 };
 
+const addTags = async (req, res) => {
+  try{
+    const { postId } = req.params;
+    const { tagsId } = req.body;
+
+    const post = await Post.findByPk(postId);
+    if (!post) return res.status(404).json({ message: "Post no encontrado" });
+
+    const tagsAdaptados = Array.isArray(tagsId) ? tagsId : [tagsId]
+
+    const newTags = await post.addTags(tagsId)
+
+    res.status(200).json({ message: "Tag/s añadido/s correctamente" })
+  }catch (error) {
+    res.status(500).json({ message: "Error al añadir el tag", error });
+  }
+}
+
+/*
+const getTagsInPost = async (req, res) => {
+  try{
+    const { postId } = req.params;
+
+    const post = await Post.findByPk(postId);
+    if (!post) return res.status(404).json({ message: "Post no encontrado" });
+
+    const tags = await post.getTags()
+
+    res.status(200).json({
+      post: {
+        id: post.id,
+        texto: post.texto,
+        tags: tags.map(tag => tag.nombre) // devuelve un array de strings
+      }
+    });
+  }catch (error) {
+    res.status(500).json({ message: "Error al obtener los tags", error });
+  }
+}
+*/
+
+
 module.exports = {
   getPosts,
   getPostById,
   createPost,
   updatePost,
   deletePost,
+  addTags
 };
