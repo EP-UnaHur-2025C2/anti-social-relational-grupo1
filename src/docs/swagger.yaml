@@ -158,6 +158,49 @@ paths:
         '200':
           description: Imagen eliminada
 
+  /posts/{id}/tags:
+    get:
+      summary: Obtener los tags asociados a un post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del post
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de tags del post
+        '500':
+          description: Error al obtener los tags
+    post:
+      summary: Agregar uno o más tags a un post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del post
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagsId:
+                  oneOf:
+                    - type: integer
+                    - type: array
+                      items:
+                        type: integer
+      responses:
+        '200':
+          description: Tag/s añadido/s correctamente
+        '500':
+          description: Error al añadir el tag
+
   /tags:
     get:
       summary: Obtener todas las etiquetas

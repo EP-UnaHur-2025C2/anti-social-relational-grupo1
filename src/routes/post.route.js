@@ -15,6 +15,7 @@ const {
   updatePost,
   deletePost,
   addTags,
+  getTagsInPost
 } = require("../controllers/post.controller");
 
 route.get("/", getPosts);
@@ -23,8 +24,8 @@ route.post("/", validarSchemaPost, createPost);
 route.put("/:id", postExists, updatePost);
 route.delete("/:id", postExists, deletePost);
 
-// Tags get y post (NO ESTAN EN SWAGGER, getTagsInPost no es seguro)
-// route.get("/:postId/tags", getTagsInPost) // obtiene tags relacionados a ese post
-route.post("/:postId/tags", addTags);
+// Tags get y post
+route.get("/:id/tags", postExists, getTagsInPost) 
+route.post("/:id/tags", postExists, addTags);
 
 module.exports = route;

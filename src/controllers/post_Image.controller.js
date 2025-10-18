@@ -16,7 +16,6 @@ const addImageToPost = async (req, res) => {
     try {
         const { postId } = req.params;
         const { url } = req.body;
-        if (!url) return res.status(400).json({ message: "La URL es obligatoria" });
 
         const image = await Post_images.create({ postId, url });
         res.status(201).json(image);
