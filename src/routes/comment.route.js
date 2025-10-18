@@ -6,6 +6,7 @@ const {
   commentExists,
   validarSchemaComment,
 } = require("../middlewares/commentMiddlewares");
+const { postExists } = require("../middlewares/postMiddlewares")
 
 // Controladores
 const {
@@ -18,7 +19,7 @@ const {
 
 route.get("/", getComments);
 route.get("/:id", commentExists, getCommentById);
-route.post("/post/:postId", validarSchemaComment, createComment);
+route.post("/post/:id", postExists, validarSchemaComment, createComment);
 route.put("/:id", commentExists, updateComment);
 route.delete("/:id", commentExists, deleteComment);
 

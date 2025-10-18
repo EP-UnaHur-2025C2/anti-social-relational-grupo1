@@ -44,8 +44,6 @@ const getCommentById = async (req,res) => {
             ]
         });
 
-        if (!comment) return res.status(404).json({ error: "Comentario no encontrado" });
-
         const limiteVisible = getLimiteVisible();
 
         if (comment.createdAt < limiteVisible || !comment.visible) {
@@ -65,11 +63,8 @@ const createComment = async (req, res) => {
         const { texto, userId } = req.body;
         
         const post = await Post.findByPk(postId);
-        if (!post) return res.status(404).json({ error: "Post no encontrado" });
-
         const user = await User.findByPk(userId);
         if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
-
 
         const newComment = await Comment.create({
             texto,
@@ -92,7 +87,6 @@ const updateComment = async (req, res) => {
         const { texto, visible } = req.body;
 
         const comment = await Comment.findByPk(id);
-        if (!comment) return res.status(404).json({ error: "Comentario no encontrado" });
 
         await comment.update({ texto, visible });
         res.status(200).json(comment);
@@ -105,9 +99,8 @@ const updateComment = async (req, res) => {
 const deleteComment = async (req, res) => {
     try {
         const { id } = req.params;
-        const deleted = await Comment.destroy({ where: { id } });
+        await Comment.destroy({ where: { id } });
 
-        if (!deleted) return res.status(404).json({ error: "Comentario no encontrado" });
         res.status(200).json({ message: "Comentario eliminado correctamente" });
     } catch (error) {
         res.status(500).json({ error: "Error al eliminar el comentario" });
