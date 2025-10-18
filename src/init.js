@@ -1,4 +1,4 @@
-const { User, Post, Tag } = require("./db/models");
+const { User, Post, Tag, Comment } = require("./db/models");
 
 const init = async () => {
   try {
@@ -30,7 +30,12 @@ const init = async () => {
 
     const tag1 = await Tag.create({ nombre: "tag1" });
     const tag2 = await Tag.create({ nombre: "tag2" });
-  
+
+    const comment = await Comment.create({
+      texto: "Un comentario",
+      visible: true,
+    });
+
     // Asociar tags a un post:
     await post1.addTag(tag1);
     await post2.addTags([tag1, tag2]);
