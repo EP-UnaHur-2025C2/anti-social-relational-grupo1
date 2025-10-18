@@ -5,6 +5,7 @@ const route = Router();
 const {
   postExists,
   validarSchemaPost,
+  validarSchemaPostTagImage,
 } = require("../middlewares/postMiddlewares");
 
 // Controladores
@@ -15,17 +16,17 @@ const {
   updatePost,
   deletePost,
   addTags,
-  getTagsInPost
+  getTagsInPost,
 } = require("../controllers/post.controller");
 
 route.get("/", getPosts);
 route.get("/:id", postExists, getPostById);
-route.post("/", validarSchemaPost, createPost);
+route.post("/", validarSchemaPostTagImage, createPost);
 route.put("/:id", postExists, updatePost);
 route.delete("/:id", postExists, deletePost);
 
 // Tags get y post
-route.get("/:id/tags", postExists, getTagsInPost) 
+route.get("/:id/tags", postExists, getTagsInPost);
 route.post("/:id/tags", postExists, addTags);
 
 module.exports = route;

@@ -1,3 +1,4 @@
+const { sequelize } = require("../db/models");
 const { Post, Post_images, Tag } = require("../db/models");
 
 // Obtener todos los posts
@@ -28,12 +29,80 @@ const getPostById = async (req, res) => {
 
 // Crear un nuevo post
 const createPost = async (req, res) => {
-  try {
+  /*try {
     const { texto } = req.body;
     const newPost = await Post.create({ texto });
     res.status(201).json(newPost);
   } catch (error) {
     res.status(500).json({ message: "Error al crear el post", error });
+  }
+};*/
+  const { texto, tags, postimages } = req.body;
+
+  try {
+    // 1. Asegura que 'tags' sea un array (o un array vacío si no se envió)
+    const safeTags = Array.isArray(tags) ? tags : [];
+
+    // 2. Asegura que 'postimages' sea un array (o un array vacío si no se envió)
+    const safeImages = Array.isArray(postimages) ? postimages : [];
+    // Inicia una transacción para agrupar todas las operaciones de DB
+    await sequelize.transaction(async (t) => {
+      // 1. Crea el Post dentro de la transacción
+      const posteo = await Post.create({ texto }, { transaction: t });
+
+      // 2. Procesa las etiquetas y las imágenes en paralelo de forma segura
+      const tagPromises = safeTags.map((tagData) => {
+        return Tag.findOrCreate({
+          where: { nombre: tagData.nombre },
+          defaults: tagData,
+          transaction: t, // <-- ¡Importante! Pasar la transacción aquí
+        });
+      });
+
+      const imagesPromises = safeImages.map((imagesData) => {
+        return Post_images.findOrCreate({
+          where: { url: imagesData.url },
+          defaults: imagesData,
+          transaction: t, // <-- ¡Importante! Pasar la transacción aquí
+        });
+      });
+
+      // 3. Espera a que todas las promesas se resuelvan
+      const tagResults = await Promise.all(tagPromises);
+      const imagesResults = await Promise.all(imagesPromises);
+
+      // 4. Extrae solo las instancias
+      const tagInstances = tagResults.map(([tagInstance]) => tagInstance);
+      const imagesInstances = imagesResults.map(
+        ([imagesInstance]) => imagesInstance
+      );
+
+      // 5. Asocia las instancias con el post dentro de la transacción
+      await posteo.addTags(tagInstances, { transaction: t });
+      await posteo.addPost_images(imagesInstances, { transaction: t });
+
+      // 6. Obtiene el post completo para la respuesta, también dentro de la transacción
+      const postWithCompleto = await Post.findOne({
+        where: { id: posteo.id },
+        include: [
+          {
+            model: Tag,
+            as: "tags",
+          },
+          {
+            model: Post_images,
+          },
+        ],
+        transaction: t, // <-- ¡Importante! Pasar la transacción aquí
+      });
+
+      // La transacción se commite automáticamente aquí si no hay errores
+      res.status(201).json(postWithCompleto);
+    });
+  } catch (error) {
+    console.error("Error al crear el post:", error);
+    // Si hay un error, la transacción se revierte automáticamente
+    res.status(500).json({ error: "Ocurrió un error al crear el post." });
   }
 };
 
@@ -52,7 +121,7 @@ const updatePost = async (req, res) => {
   }
 };
 
-// Eliminar un post y sus imágenes 
+// Eliminar un post y sus imágenes
 const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -68,22 +137,22 @@ const deletePost = async (req, res) => {
 };
 
 const addTags = async (req, res) => {
-  try{
+  try {
     const { id } = req.params;
     const { tagsId } = req.body;
     const post = await Post.findByPk(id);
 
-    const tagsAdaptados = Array.isArray(tagsId) ? tagsId : [tagsId]
-    const newTags = await post.addTags(tagsId)
+    const tagsAdaptados = Array.isArray(tagsId) ? tagsId : [tagsId];
+    const newTags = await post.addTags(tagsId);
 
-    res.status(200).json({ message: "Tag/s añadido/s correctamente" })
-  }catch (error) {
+    res.status(200).json({ message: "Tag/s añadido/s correctamente" });
+  } catch (error) {
     res.status(500).json({ message: "Error al añadir el tag", error });
   }
-}
+};
 
 const getTagsInPost = async (req, res) => {
-  try{
+  try {
     const { id } = req.params;
 
     const data = await Post.findOne({
@@ -97,13 +166,12 @@ const getTagsInPost = async (req, res) => {
         },
       ],
     });
-    
+
     res.status(200).json({ data });
-  }catch (error) {
+  } catch (error) {
     res.status(500).json({ message: "Error al obtener los tags", error });
   }
-}
-
+};
 
 module.exports = {
   getPosts,
@@ -112,5 +180,5 @@ module.exports = {
   updatePost,
   deletePost,
   addTags,
-  getTagsInPost
+  getTagsInPost,
 };
