@@ -17,6 +17,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "joi": "^18.0.1",
+    "multer": "^2.0.2",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7",
     "swagger-ui-express": "^5.0.1",
