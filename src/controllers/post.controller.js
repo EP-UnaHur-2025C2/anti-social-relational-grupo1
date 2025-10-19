@@ -64,7 +64,7 @@ const createPost = async (req, res) => {
   }
 };*/
   const { texto, tags, postimages } = req.body;
-
+  const userId = req.user.id;
   try {
     // 1. Asegura que 'tags' sea un array (o un array vacío si no se envió)
     const safeTags = Array.isArray(tags) ? tags : [];
@@ -74,7 +74,7 @@ const createPost = async (req, res) => {
     // Inicia una transacción para agrupar todas las operaciones de DB
     await sequelize.transaction(async (t) => {
       // 1. Crea el Post dentro de la transacción
-      const posteo = await Post.create({ texto }, { transaction: t });
+      const posteo = await Post.create({ texto, userId }, { transaction: t });
 
       // 2. Procesa las etiquetas y las imágenes en paralelo de forma segura
       const tagPromises = safeTags.map((tagData) => {

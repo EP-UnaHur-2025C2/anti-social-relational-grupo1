@@ -25,7 +25,7 @@ const { createComment } = require("../controllers/comment.controller");
 
 route.get("/", getPosts);
 route.get("/:id", postExists, getPostById);
-route.post("/", validarSchemaPostTagImage, createPost);
+route.post("/", simpleUserAuth, validarSchemaPostTagImage, createPost);
 route.post(
   // INSERTAR COMENTARIO A UN POST
   "/:id/comments",
