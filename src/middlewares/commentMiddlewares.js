@@ -9,7 +9,7 @@ const commentExists = validarById(Comment);
 const validarSchemaComment = (req, res, next) => {
   const { error, _ } = genericSchemaValidator(commentSchema, req.body);
   if (error) {
-    res.status(400).json({
+    return res.status(400).json({
       errores: error.details.map((e) => {
         return {
           attributo: e.path[0],

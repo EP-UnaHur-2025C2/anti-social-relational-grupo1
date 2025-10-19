@@ -1,5 +1,6 @@
 const { sequelize } = require("../db/models");
-const { Post, Post_images, Tag } = require("../db/models");
+const { Post, Post_images, Tag, Comment } = require("../db/models");
+const { Op } = require("sequelize");
 
 // Obtener todos los posts
 const getPosts = async (_, res) => {
@@ -14,13 +15,38 @@ const getPosts = async (_, res) => {
 };
 
 // Obtener un post por ID
+const COMMENT_VISIBLE_MESES = parseInt(process.env.COMMENT_VISIBLE_MESES);
+const getLimiteVisible = () => {
+  const date = new Date();
+  // Subtract the configurable number of months
+  date.setMonth(date.getMonth() - COMMENT_VISIBLE_MESES);
+  return date;
+};
 const getPostById = async (req, res) => {
   try {
+    const limiteVisible = getLimiteVisible();
     const { id } = req.params;
     const post = await Post.findByPk(id, {
-      include: [{ model: Post_images }],
+      include: [
+        { model: Post_images },
+        {
+          model: Tag,
+          as: "tags",
+        },
+        {
+          model: Comment,
+          as: "comments", // Use the correct alias for the Comment association (e.g., 'comments')
+          /*required: false, // Use false so the Post is returned even if it has no comments
+          where: {
+            // FILTERING LOGIC: Only include comments where createdAt >= cutOffDate
+            createdAt: {
+              [Op.gte]: limiteVisible, // Greater than or Equal to (the cut-off date)
+            },
+          },*/
+          // Optional: You might want to sort them (e.g., newest first)
+        },
+      ],
     });
-    if (!post) return res.status(404).json({ message: "Post no encontrado" });
     res.status(200).json(post);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el post", error });

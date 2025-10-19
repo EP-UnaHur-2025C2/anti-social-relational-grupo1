@@ -7,6 +7,8 @@ const {
   validarSchemaPost,
   validarSchemaPostTagImage,
 } = require("../middlewares/postMiddlewares");
+const { validarSchemaComment } = require("../middlewares/commentMiddlewares");
+const simpleUserAuth = require("../middlewares/simpleUserAuth");
 
 // Controladores
 const {
@@ -19,9 +21,19 @@ const {
   getTagsInPost,
 } = require("../controllers/post.controller");
 
+const { createComment } = require("../controllers/comment.controller");
+
 route.get("/", getPosts);
 route.get("/:id", postExists, getPostById);
 route.post("/", validarSchemaPostTagImage, createPost);
+route.post(
+  // INSERTAR COMENTARIO A UN POST
+  "/:id/comments",
+  postExists,
+  simpleUserAuth,
+  validarSchemaComment,
+  createComment
+);
 route.put("/:id", postExists, updatePost);
 route.delete("/:id", postExists, deletePost);
 
