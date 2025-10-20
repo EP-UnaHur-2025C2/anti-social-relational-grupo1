@@ -1,110 +1,146 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: UnaHur Anti-Social API
-  description: API para la red social UnaHur Anti-Social Net (MVP).
+  title: Anti-Social Relational API
+  description: API del proyecto grupal para la materia de Entornos de Programación — UNA Hur. Gestiona usuarios, publicaciones, comentarios, tags e imágenes.
   version: 1.0.0
+  contact:
+    name: Grupo 1 - 2025 C2
+    url: https://github.com/EP-UnaHur-2025C2/anti-social-relational-grupo1
+
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3000/api
     description: Servidor local de desarrollo
+
+tags:
+  - name: Users
+    description: Gestión de usuarios
+  - name: Posts
+    description: Gestión de publicaciones
+  - name: Comments
+    description: Gestión de comentarios
+  - name: Tags
+    description: Gestión de etiquetas
+  - name: Images
+    description: Gestión de imágenes en publicaciones
 
 paths:
   /users:
     get:
+      tags: [Users]
       summary: Obtener todos los usuarios
       responses:
-        '200':
-          description: Lista de usuarios obtenida correctamente
+        "200":
+          description: Lista de usuarios
     post:
+      tags: [Users]
       summary: Crear un nuevo usuario
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
-        '201':
+        "201":
           description: Usuario creado correctamente
+        "400":
+          description: Datos inválidos
+        "409":
+          description: El nickname ya existe
 
   /users/{id}:
     get:
-      summary: Obtener usuario por ID
+      tags: [Users]
+      summary: Obtener un usuario por ID
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
       responses:
-        '200':
+        "200":
           description: Usuario encontrado
-        '404':
+        "404":
           description: Usuario no encontrado
     put:
-      summary: Actualizar usuario por ID
+      tags: [Users]
+      summary: Actualizar un usuario por ID
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
-        '200':
+        "200":
           description: Usuario actualizado
+        "404":
+          description: Usuario no encontrado
     delete:
-      summary: Eliminar usuario
+      tags: [Users]
+      summary: Eliminar un usuario por ID
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
       responses:
-        '200':
-          description: Usuario eliminado
+        "200":
+          description: Usuario eliminado correctamente
 
   /posts:
     get:
+      tags: [Posts]
       summary: Obtener todos los posts
       responses:
-        '200':
-          description: Lista de posts obtenida
+        "200":
+          description: Lista de posts
     post:
+      tags: [Posts]
       summary: Crear un nuevo post
+      security:
+        - UserHeader: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Post'
+              $ref: "#/components/schemas/PostCreate"
       responses:
-        '201':
+        "201":
           description: Post creado correctamente
+        "400":
+          description: Error en los datos enviados
 
   /posts/{id}:
     get:
-      summary: Obtener post por ID
+      tags: [Posts]
+      summary: Obtener un post por ID
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
       responses:
-        '200':
-          description: Post encontrado
-        '404':
+        "200":
+          description: Post obtenido correctamente
+        "404":
           description: Post no encontrado
     put:
-      summary: Actualizar post
+      tags: [Posts]
+      summary: Actualizar un post existente
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
@@ -112,118 +148,216 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Post'
+              $ref: "#/components/schemas/Post"
       responses:
-        '200':
-          description: Post actualizado
+        "200":
+          description: Post actualizado correctamente
     delete:
-      summary: Eliminar post
+      tags: [Posts]
+      summary: Eliminar un post
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
       responses:
-        '200':
-          description: Post eliminado
+        "200":
+          description: Post eliminado correctamente
 
-  /posts/{id}/images:
+  /posts/{id}/comments:
     post:
-      summary: Agregar una imagen a un post
+      tags: [Comments]
+      summary: Crear un comentario en un post
+      security:
+        - UserHeader: []
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema:
             type: integer
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PostImage'
+              $ref: "#/components/schemas/Comment"
       responses:
-        '201':
-          description: Imagen agregada al post
-    delete:
-      summary: Eliminar una imagen de un post
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Imagen eliminada
+        "201":
+          description: Comentario creado
+        "400":
+          description: Error de validación
 
-  /posts/{id}/tags:
+  /comments:
     get:
-      summary: Obtener los tags asociados a un post
+      tags: [Comments]
+      summary: Obtener todos los comentarios
+      responses:
+        "200":
+          description: Lista de comentarios
+
+  /comments/{id}:
+    get:
+      tags: [Comments]
+      summary: Obtener comentario por ID
       parameters:
         - name: id
           in: path
           required: true
-          description: ID del post
           schema:
             type: integer
       responses:
-        '200':
-          description: Lista de tags del post
-        '500':
-          description: Error al obtener los tags
-    post:
-      summary: Agregar uno o más tags a un post
+        "200":
+          description: Comentario encontrado
+    put:
+      tags: [Comments]
+      summary: Actualizar comentario
       parameters:
         - name: id
           in: path
           required: true
-          description: ID del post
           schema:
             type: integer
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                tagsId:
-                  oneOf:
-                    - type: integer
-                    - type: array
-                      items:
-                        type: integer
+              $ref: "#/components/schemas/Comment"
       responses:
-        '200':
-          description: Tag/s añadido/s correctamente
-        '500':
-          description: Error al añadir el tag
+        "200":
+          description: Comentario actualizado
+    delete:
+      tags: [Comments]
+      summary: Eliminar comentario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Comentario eliminado
 
   /tags:
     get:
-      summary: Obtener todas las etiquetas
+      tags: [Tags]
+      summary: Obtener todos los tags
       responses:
-        '200':
+        "200":
           description: Lista de tags
     post:
-      summary: Crear una nueva etiqueta
+      tags: [Tags]
+      summary: Crear nuevo tag
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Tag'
+              $ref: "#/components/schemas/Tag"
       responses:
-        '201':
+        "201":
           description: Tag creado correctamente
 
+  /tags/{id}:
+    get:
+      tags: [Tags]
+      summary: Obtener tag por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Tag obtenido correctamente
+    put:
+      tags: [Tags]
+      summary: Actualizar tag por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tag"
+      responses:
+        "200":
+          description: Tag actualizado correctamente
+    delete:
+      tags: [Tags]
+      summary: Eliminar tag por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Tag eliminado correctamente
+
+  /posts/{id}/images:
+    get:
+      tags: [Images]
+      summary: Obtener imágenes de un post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Lista de imágenes
+    post:
+      tags: [Images]
+      summary: Agregar imagen a un post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Image"
+      responses:
+        "201":
+          description: Imagen agregada
+    delete:
+      tags: [Images]
+      summary: Eliminar imagen de un post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Imagen eliminada correctamente
+
 components:
+  securitySchemes:
+    UserHeader:
+      type: apiKey
+      in: header
+      name: X-User-ID
+      description: ID de usuario requerido para endpoints protegidos
+
   schemas:
     User:
       type: object
+      required: [nickname, mail]
       properties:
+        id:
+          type: integer
         nickname:
           type: string
         mail:
@@ -231,20 +365,54 @@ components:
 
     Post:
       type: object
+      required: [texto]
       properties:
+        id:
+          type: integer
         texto:
           type: string
         userId:
           type: integer
 
-    PostImage:
+    PostCreate:
+      allOf:
+        - $ref: "#/components/schemas/Post"
+        - type: object
+          properties:
+            tags:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tag"
+            postimages:
+              type: array
+              items:
+                $ref: "#/components/schemas/Image"
+
+    Comment:
       type: object
+      required: [texto]
       properties:
-        url:
+        id:
+          type: integer
+        texto:
           type: string
+        visible:
+          type: boolean
 
     Tag:
       type: object
+      required: [nombre]
       properties:
+        id:
+          type: integer
         nombre:
+          type: string
+
+    Image:
+      type: object
+      required: [url]
+      properties:
+        id:
+          type: integer
+        url:
           type: string
