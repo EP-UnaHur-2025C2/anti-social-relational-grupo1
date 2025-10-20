@@ -1,6 +1,9 @@
 const { User } = require("../db/models");
 const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 const userSchema = require("../schemas/user.schema");
+const validarById = require("../middlewares/generic.middleware");
+
+const validarUserById = validarById(User);
 
 const existUserName = async (req, res, next) => {
   try {
@@ -30,4 +33,4 @@ const validarSchemaUser = (req, res, next) => {
   next();
 };
 
-module.exports = { existUserName, validarSchemaUser };
+module.exports = { existUserName, validarSchemaUser, validarUserById };

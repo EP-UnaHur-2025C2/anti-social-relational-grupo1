@@ -20,7 +20,7 @@ const {
 route.get("/", getTags);
 route.get("/:id", validarTagId, getTagById);
 route.post("/", validarSchemaTag, existTag, createTag); // Tiene el Middleware.
-route.put("/:id", updateTag);
-route.delete("/:id", deleteTag);
+route.put("/:id", validarTagId, existTag, updateTag);
+route.delete("/:id", validarTagId, deleteTag);
 
 module.exports = route;

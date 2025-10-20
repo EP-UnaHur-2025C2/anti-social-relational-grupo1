@@ -138,7 +138,6 @@ const updatePost = async (req, res) => {
     const { id } = req.params;
     const { texto } = req.body;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ message: "Post no encontrado" }); // SACAR CON MIDDLEWARE
 
     await post.update({ texto });
     res.status(200).json(post);
@@ -152,7 +151,6 @@ const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ message: "Post no encontrado" }); //SACAR CON MIDDLEWARE
 
     await Post_images.destroy({ where: { postId: id } });
     await post.destroy();

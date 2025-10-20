@@ -38,12 +38,10 @@ const createTag = async (req, res) => {
 const updateTag = async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = await Tag.update(req.body, { where: { id } });
-    if (updated[0] === 0)
-      return res.status(404).json({ error: "Tag no encontrado" }); //SACAR CON MIDDLEWARE
-
+    const { nombre } = req.body;
     const updatedTag = await Tag.findByPk(id);
-    res.status(200).json(updatedTag);
+    const tagNuevo = await updatedTag.update({ nombre });
+    res.status(200).json(tagNuevo);
   } catch (error) {
     res.status(500).json({ error: "Error al actualizar el Tag" });
   }
@@ -57,7 +55,6 @@ const deleteTag = async (req, res) => {
       where: { id },
     });
 
-    if (!deleted) return res.status(404).json({ error: "Tag no encontrado" }); //SACAR CON MIDDLEWARE
     res.status(200).json({ message: "Tag eliminado correctamente" });
   } catch (error) {
     res.status(500).json({ error: "Error al eliminar el tag" });
