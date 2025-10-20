@@ -1,6 +1,9 @@
 const { Tag } = require("../db/models");
 const genericSchemaValidator = require("../schemas/genericSchemaValidator");
 const tagSchema = require("../schemas/tag.schema");
+const validarById = require("./generic.middleware");
+
+const validarTagId = validarById(Tag);
 
 const existTag = async (req, res, next) => {
   try {
@@ -31,4 +34,4 @@ const validarSchemaTag = (req, res, next) => {
   }
   next();
 };
-module.exports = { existTag, validarSchemaTag };
+module.exports = { existTag, validarSchemaTag, validarTagId };

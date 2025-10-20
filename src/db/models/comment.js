@@ -15,7 +15,11 @@ module.exports = (sequelize, DataTypes) => {
   Comment.init(
     {
       texto: { type: DataTypes.STRING, allowNull: false },
-      visible: DataTypes.BOOLEAN, //ver como calcularlo
+      visible: {
+        // ⬅️ Convertido a objeto para incluir la opción
+        type: DataTypes.BOOLEAN,
+        defaultValue: true, // ⬅️ El valor por defecto al crear el comentario
+      },
     },
     {
       sequelize,

@@ -10,18 +10,12 @@ const {
 
 // Controladores
 const {
+  getImages,
   addImageToPost,
   deleteImageFromPost,
   getImagesFromPost,
 } = require("../controllers/post_image.controller");
 
-route.get("/:postId/images", postExists, getImagesFromPost);
-route.post("/:postId/images", postExists, validarSchemaImage, addImageToPost);
-route.delete(
-  "/:postId/images/:imageId",
-  postExists,
-  imageExists,
-  deleteImageFromPost
-);
+route.get("/", getImages);
 
 module.exports = route;

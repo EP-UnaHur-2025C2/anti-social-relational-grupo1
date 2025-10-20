@@ -138,7 +138,7 @@ const updatePost = async (req, res) => {
     const { id } = req.params;
     const { texto } = req.body;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ message: "Post no encontrado" });
+    if (!post) return res.status(404).json({ message: "Post no encontrado" }); // SACAR CON MIDDLEWARE
 
     await post.update({ texto });
     res.status(200).json(post);
@@ -152,7 +152,7 @@ const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.findByPk(id);
-    if (!post) return res.status(404).json({ message: "Post no encontrado" });
+    if (!post) return res.status(404).json({ message: "Post no encontrado" }); //SACAR CON MIDDLEWARE
 
     await Post_images.destroy({ where: { postId: id } });
     await post.destroy();
@@ -162,14 +162,14 @@ const deletePost = async (req, res) => {
   }
 };
 
-const addTags = async (req, res) => {
+const addTag = async (req, res) => {
   try {
     const { id } = req.params;
-    const { tagsId } = req.body;
+    const { tagId } = req.body;
     const post = await Post.findByPk(id);
+    const tag = await Tag.findByPk(tagId);
 
-    const tagsAdaptados = Array.isArray(tagsId) ? tagsId : [tagsId];
-    const newTags = await post.addTags(tagsId);
+    const newTag = await post.addTag(tag);
 
     res.status(200).json({ message: "Tag/s añadido/s correctamente" });
   } catch (error) {
@@ -199,12 +199,51 @@ const getTagsInPost = async (req, res) => {
   }
 };
 
+const getImagesFromPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const images = await Post_images.findAll({ where: { id } });
+    res.status(200).json(images);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener imágenes", error });
+  }
+};
+
+// Agregar imagen a un post
+const addImageToPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { url } = req.body;
+
+    const image = await Post_images.create({ url });
+    const post = await Post.findByPk(id);
+    const porLasDudas = await post.addPost_images(image);
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(500).json({ message: "Error al agregar imagen", error });
+  }
+};
+
+// Eliminar imagen de un post
+const deleteImageFromPost = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    await Post_images.destroy({ where: { id: imageId } });
+    res.status(200).json({ message: "Imagen eliminada correctamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar imagen", error });
+  }
+};
+
 module.exports = {
   getPosts,
   getPostById,
   createPost,
   updatePost,
   deletePost,
-  addTags,
+  addTag,
   getTagsInPost,
+  getImagesFromPost,
+  addImageToPost,
+  deleteImageFromPost,
 };

@@ -2,7 +2,11 @@ const { Router } = require("express");
 const route = Router();
 
 // Middleware
-const { existTag, validarSchemaTag } = require("../middlewares/tagMiddlewares");
+const {
+  existTag,
+  validarSchemaTag,
+  validarTagId,
+} = require("../middlewares/tagMiddlewares");
 
 // Controladores
 const {
@@ -14,7 +18,7 @@ const {
 } = require("../controllers/tag.controller");
 
 route.get("/", getTags);
-route.get("/:id", getTagById);
+route.get("/:id", validarTagId, getTagById);
 route.post("/", validarSchemaTag, existTag, createTag); // Tiene el Middleware.
 route.put("/:id", updateTag);
 route.delete("/:id", deleteTag);

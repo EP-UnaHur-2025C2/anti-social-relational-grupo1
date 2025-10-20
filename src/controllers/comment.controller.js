@@ -15,14 +15,7 @@ const getLimiteVisible = () => {
 const getComments = async (_, res) => {
   try {
     const limiteVisible = getLimiteVisible();
-    const data = await Comment.findAll({
-      where: {
-        createdAt: { [Op.gte]: limiteVisible },
-        visible: true,
-      },
-      include: [{ model: Post }, { model: User }],
-      order: [["createdAt", "DESC"]],
-    });
+    const data = await Comment.findAll({});
 
     res.status(200).json(data);
   } catch (error) {
@@ -34,9 +27,7 @@ const getComments = async (_, res) => {
 const getCommentById = async (req, res) => {
   try {
     const { id } = req.params;
-    const comment = await Comment.findByPk(id, {
-      include: [{ model: Post }, { model: User }],
-    });
+    const comment = await Comment.findByPk(id);
 
     const limiteVisible = getLimiteVisible();
 
@@ -54,7 +45,6 @@ const getCommentById = async (req, res) => {
 const createComment = async (req, res) => {
   try {
     const { id: postId } = req.params;
-    console.log(req.body);
     const { texto } = req.body;
     const userId = req.user.id;
 
